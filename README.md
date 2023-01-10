@@ -1,0 +1,2 @@
+# same-eksame
+eksamenoppgave. lmao
