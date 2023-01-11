@@ -27,5 +27,5 @@ app.get("/",  (req,res)=>{
     
     res.render('index')
 })
-
+console.log('I LOVE MEN')
 app.use(routes);

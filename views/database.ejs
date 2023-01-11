@@ -12,11 +12,15 @@
 </head>
 <body>
     <header class="text-center text-light my-4">
-        <h1 class="mb-4">Rein list</h1>
+        <a href="/database"><h1 class="mb-4">Rein list</h1></a>
+        <a href="/map"><h1 class="mb-4">Kart</h1></a>
+        <a href="/index"><h1 class="mb-4">About</h1></a>
+
         <form class="search">
           <input class="form-control m-auto searchField" type="text" name="search" placeholder="Søk reinsdyr" />
         </form>
         <h1 class="userTitle"></h1>
+        <h2 class="userBack d-none">Back</h2>
       </header>
 
 
@@ -31,8 +35,17 @@
         <%   }) %>
       </div>
       </ul>
-
+  <br>
       <ul class="flocks text-light list-group todos mx-auto">
+
+      </ul>
+      <br>
+      <div class="flokkHeader">
+        <h1></h1>
+        <img src="" height="300px">
+      </div>
+      
+      <ul class="reins text-light list-group todos mx-auto">
 
       </ul>
 
@@ -42,13 +55,17 @@
         const flocks = document.querySelector('.flocks')
         const userTitle = document.querySelector('.userTitle')
         const search = document.querySelector('.search')
-
-
+        const reins = document.querySelector('.reins')
+        const flokkHeader = document.querySelector('.flokkHeader')
+        const userBack = document.querySelector('.userBack')
+        var rein
+        console.log(flokkHeader.children[1].src='https://i.kym-cdn.com/entries/icons/original/000/041/237/cover2.jpg')
         owners.addEventListener('click', async (e)=>{
-          console.log(e.path[0].innerText)
+
           const ownerID = e.path[0].innerText
-          console.log(ownerID)
           userTitle.innerHTML = `${ownerID}  sine reinsdyr`
+          userBack.classList.remove("d-none")
+
             //sender data for authentisering
             try {
                 const res = await fetch('/database',{
@@ -59,18 +76,21 @@
                 
                 //venter på data
                 const data = await res.json()
-                console.log(data.flocks)
-
+                console.log(data.rein)
+                rein = data.rein
                 owners.classList.add("d-none")
                 userTitle.classList.remove('d-none')
                 data.flocks.forEach(flock => {
                   flocks.innerHTML +=
-                  `<li class="text-light list-group-item d-flex justify-content-between align-items-center">
-                    <p>${flock.navn}</p>
-                    <p>${flock.eier}</p>
-                    <p>${flock.buemerke}</p>
-                    <p>${flock.serieinndeling}</p>
-                  </li>`
+                  `<div class="${flock.navn} ${flock.bumerkeBilde}">
+                    <li class="${flock.navn} ${flock.bumerkeBilde} text-light list-group-item d-flex justify-content-between align-items-center ">
+                      <p>${flock.navn}</p>
+                      <p>${flock.eier}</p>
+                      <p>${flock.buemerke}</p>
+                      <p>${flock.serieinndeling}</p>
+                    </li>
+                  </div>
+                  `
                 });
     
             } catch (err) {
@@ -81,7 +101,7 @@
           e.preventDefault()
           searchField = document.querySelector('.searchField')
           const searchResult = searchField.value
-
+          console.log(searchResult)
           try {
                 const res = await fetch('/filter',{
                     method: 'post',
@@ -91,13 +111,83 @@
                 
                 //venter på data
                 const data = await res.json()
-                console.log(data)
-    
+                rein = data.reinsdyr
+
+                owners.classList.add("d-none")
+                flocks.innerHTML = " "
+                userTitle.innerHTML = ""
+                userBack.classList.remove("d-none")
+
+
+                data.flock.forEach(flock => {
+                  flocks.innerHTML +=
+                  `<div class="${flock.navn} ${flock.bumerkeBilde}">
+                    <li class="${flock.navn} ${flock.bumerkeBilde} text-light list-group-item d-flex justify-content-between align-items-center ">
+                      <p>${flock.navn}</p>
+                      <p>${flock.eier}</p>
+                      <p>${flock.buemerke}</p>
+                      <p>${flock.serieinndeling}</p>
+                    </li>
+                  </div>
+                  `
+                });
+                
             } catch (err) {
                 console.log(err)
             }
-
         })
+        flocks.addEventListener('click', e=>{
+          console.log(rein)
+          reins.innerHTML = ""
+
+          flokkPath = e.path[1].classList[0]
+          buemerkeBilde = e.path[1].classList[1]
+
+          flokkHeader.children[0].innerText=flokkPath
+          flokkHeader.children[1].src=buemerkeBilde 
+          rein.forEach((rein)=>{
+            if(Array.isArray(rein)){
+              rein.forEach((rein)=>{
+                if(rein.flokk==flokkPath){
+
+                  reins.innerHTML += `
+                  <li class="${rein.navn} text-light list-group-item d-flex justify-content-between align-items-center ">
+                    <p>${rein.navn}</p>
+                    <p>${rein.flokk}</p>
+                    <p>${rein.fødselsdato}</p>
+                    <p>${rein.serienummer}</p>
+                  </li>
+                   `
+                }
+              console.log('testing 1')
+              
+              })
+              
+            }else{
+              console.log('testing 2')
+              if(rein.flokk==flokkPath){
+                  reins.innerHTML += `
+                  <li class="${rein.navn} text-light list-group-item d-flex justify-content-between align-items-center ">
+                    <p>${rein.navn}</p>
+                    <p>${rein.flokk}</p>
+                    <p>${rein.fødselsdato}</p>
+                    <p>${rein.serienummer}</p>
+                  </li>
+                   `
+                }
+              }
+             })
+          })
+          userBack.addEventListener('click', e=>{
+            userBack.classList.add("d-none")
+            owners.classList.remove("d-none")
+            userTitle.classList.add('d-none')
+            reins.innerHTML = ""
+            flocks.innerHTML = " "
+            flokkHeader.children[0].innerText=''
+            flokkHeader.children[1].src='' 
+          })
+          
     </script>
 </body>
 </html>
