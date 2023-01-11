@@ -35,6 +35,10 @@
       <ul class="flocks text-light list-group todos mx-auto">
 
       </ul>
+      <br>
+      <ul class="reins text-light list-group todos mx-auto">
+
+      </ul>
 
 
       <script>
@@ -42,7 +46,8 @@
         const flocks = document.querySelector('.flocks')
         const userTitle = document.querySelector('.userTitle')
         const search = document.querySelector('.search')
-
+        const reins = document.querySelector('.reins')
+        var rein
 
         owners.addEventListener('click', async (e)=>{
           console.log(e.path[0].innerText)
@@ -59,18 +64,21 @@
                 
                 //venter på data
                 const data = await res.json()
-                console.log(data.flocks)
-
+                console.log(data.rein)
+                rein = data.rein
                 owners.classList.add("d-none")
                 userTitle.classList.remove('d-none')
                 data.flocks.forEach(flock => {
                   flocks.innerHTML +=
-                  `<li class="text-light list-group-item d-flex justify-content-between align-items-center">
-                    <p>${flock.navn}</p>
-                    <p>${flock.eier}</p>
-                    <p>${flock.buemerke}</p>
-                    <p>${flock.serieinndeling}</p>
-                  </li>`
+                  `<div class="${flock.navn}">
+                    <li class="${flock.navn} text-light list-group-item d-flex justify-content-between align-items-center ">
+                      <p>${flock.navn}</p>
+                      <p>${flock.eier}</p>
+                      <p>${flock.buemerke}</p>
+                      <p>${flock.serieinndeling}</p>
+                    </li>
+                  </div>
+                  `
                 });
     
             } catch (err) {
@@ -81,7 +89,7 @@
           e.preventDefault()
           searchField = document.querySelector('.searchField')
           const searchResult = searchField.value
-
+          console.log(searchResult)
           try {
                 const res = await fetch('/filter',{
                     method: 'post',
@@ -91,13 +99,54 @@
                 
                 //venter på data
                 const data = await res.json()
-                console.log(data)
-    
+                console.log(data.reinsdyr)
+                rein = data.reinsdyr
+                flocks.innerHTML = " "
+                userTitle.innerHTML = ""
+                data.flock.forEach(flock => {
+                  flocks.innerHTML +=
+                  `<div class="${flock.navn}">
+                    <li class="${flock.navn} text-light list-group-item d-flex justify-content-between align-items-center ">
+                      <p>${flock.navn}</p>
+                      <p>${flock.eier}</p>
+                      <p>${flock.buemerke}</p>
+                      <p>${flock.serieinndeling}</p>
+                    </li>
+                  </div>
+                  `
+                });
+                
             } catch (err) {
                 console.log(err)
             }
-
         })
+        flocks.addEventListener('click', e=>{
+          console.log(rein)
+          
+          flokkPath = e.path[1].classList[0]
+          rein.forEach((rein)=>{
+            if(Array.isArray(rein)){
+              flocks.innerHTML += `
+              <li class="${rein.navn} text-light list-group-item d-flex justify-content-between align-items-center ">
+                <p>${rein.navn}</p>
+                <p>${rein.flokk}</p>
+                <p>${rein.fødselsdato}</p>
+                <p>${rein.serienummer}</p>
+              </li>
+            `
+            }else{
+              flocks.innerHTML += `
+              <li class="${rein.navn} text-light list-group-item d-flex justify-content-between align-items-center ">
+                <p>${rein.navn}</p>
+                <p>${rein.flokk}</p>
+                <p>${rein.fødselsdato}</p>
+                <p>${rein.serienummer}</p>
+              </li>
+            `
+              }
+             })
+          })
+          
     </script>
 </body>
 </html>

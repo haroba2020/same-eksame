@@ -28,4 +28,5 @@ app.get("/",  (req,res)=>{
     res.render('index')
 })
 
+console.log('Testing'.includes('St'))
 app.use(routes);

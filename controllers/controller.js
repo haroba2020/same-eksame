@@ -1,8 +1,6 @@
 const Flock = require("../modules/Flocks");
 const Rein = require("../modules/Reins");
 const Owner = require("../modules/Owners");
-const { find } = require("lodash");
-
 
 module.exports.database_get = async (req,res)  =>{
     
@@ -13,22 +11,42 @@ module.exports.database_get = async (req,res)  =>{
 
 module.exports.database_post = async (req,res) =>{
     const {ownerID} = req.body
+    var reinArray = [];
+    var counter = 0;
         Flock.find({eier:ownerID}).then((result)=>{
-        res.status(201).json({flocks: result})
+            result.forEach((flock)=>{
+                Rein.find({flokk:flock.navn}).then((rein)=>{
+                    reinArray.push(rein)
+                    counter++
+                    if(counter === result.length){
+                        res.status(201).json({flocks: result, rein:reinArray})
+                }
+            })
+        })
     })
 }
 
 module.exports.database_filter = async (req,res) =>{
     const {searchResult} = req.body
-    let filtered
-        Rein.find().then((result)=>{
-            filtered = result.filter(raindeer => raindeer.navn.includes(searchResult))
-            console.log(filtered)
 
-        res.status(201).json({reinsdyr: filtered})
+    var flockArray = [];
+    Rein.find().then((result)=>{
+        const filtered = result.filter(raindeer => !raindeer.navn.toLowerCase().indexOf(searchResult.toLowerCase()))
+        console.log(filtered)
+        var counter = 0
+        filtered.forEach((filtRein)=>{
+            Flock.find({navn:filtRein.flokk}).then((flockFiltered)=>{
+                if(flockFiltered[0] && flockFiltered[0]._id && !flockArray.some(flock=>flock._id.toString() === flockFiltered[0]._id.toString())){
+                    flockArray.push(flockFiltered[0])
+                }
+                counter++
+                if(counter === filtered.length){
+                    res.status(201).json({reinsdyr: filtered, flock: flockArray}) 
+                }
+            })
+        })
     })
 }
-
 
 module.exports.owner_post = async (req,res)=>{
     const {navn,personnummer,kontaktspråk,telefonnummer} = req.body
