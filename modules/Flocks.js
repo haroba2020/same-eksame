@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const {isEmail} = require('validator')
 const bcrypt = require('bcrypt')
 
-flokkSchema = new mongoose.Schema({
+flockSchema = new mongoose.Schema({
     eier:{
         type:String,
         required:true,
@@ -25,6 +25,6 @@ flokkSchema = new mongoose.Schema({
     }
 })
 
-const Flokk = mongoose.model('flokk',flokkSchema)
+const Flock = mongoose.model('flock',flockSchema)
 
-module.exports = Flokk
+module.exports = Flock

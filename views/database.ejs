@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <link rel="stylesheet" href="/style.css">
+    <title>Todoes</title>
+    <link rel="shortcut icon" href="#">
+
+</head>
+<body>
+    <header class="text-center text-light my-4">
+        <h1 class="mb-4">Rein list</h1>
+        <form class="search">
+          <input class="form-control m-auto searchField" type="text" name="search" placeholder="Søk reinsdyr" />
+        </form>
+        <h1 class="userTitle"></h1>
+      </header>
+
+
+
+      <ul class="text-light list-group todos mx-auto">
+      <div class="owners">
+      <% owners.forEach((item)=>{ %> 
+        <li class="text-light list-group-item d-flex justify-content-between align-items-center">
+          <span><%= item.navn %> </span> 
+          <i class="far fa-trash-alt delete"></i>     
+        </li>
+        <%   }) %>
+      </div>
+      </ul>
+
+      <ul class="flocks text-light list-group todos mx-auto">
+
+      </ul>
+
+
+      <script>
+        const owners = document.querySelector('.owners')
+        const flocks = document.querySelector('.flocks')
+        const userTitle = document.querySelector('.userTitle')
+        const search = document.querySelector('.search')
+
+
+        owners.addEventListener('click', async (e)=>{
+          console.log(e.path[0].innerText)
+          const ownerID = e.path[0].innerText
+          console.log(ownerID)
+          userTitle.innerHTML = `${ownerID}  sine reinsdyr`
+            //sender data for authentisering
+            try {
+                const res = await fetch('/database',{
+                    method: 'post',
+                    body: JSON.stringify({ownerID}),
+                    headers: {'Content-Type': 'application/json'}
+                })
+                
+                //venter på data
+                const data = await res.json()
+                console.log(data.flocks)
+
+                owners.classList.add("d-none")
+                userTitle.classList.remove('d-none')
+                data.flocks.forEach(flock => {
+                  flocks.innerHTML +=
+                  `<li class="text-light list-group-item d-flex justify-content-between align-items-center">
+                    <p>${flock.navn}</p>
+                    <p>${flock.eier}</p>
+                    <p>${flock.buemerke}</p>
+                    <p>${flock.serieinndeling}</p>
+                  </li>`
+                });
+    
+            } catch (err) {
+                console.log(err)
+            }
+        })
+        search.addEventListener('submit',async e=>{
+          e.preventDefault()
+          searchField = document.querySelector('.searchField')
+          const searchResult = searchField.value
+
+          try {
+                const res = await fetch('/filter',{
+                    method: 'post',
+                    body: JSON.stringify({searchResult}),
+                    headers: {'Content-Type': 'application/json'}
+                })
+                
+                //venter på data
+                const data = await res.json()
+                console.log(data)
+    
+            } catch (err) {
+                console.log(err)
+            }
+
+        })
+    </script>
+</body>
+</html>

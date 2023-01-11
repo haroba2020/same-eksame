@@ -1,25 +1,25 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 //enkel schema for Eiere
-const eierSchema = new Schema({
+const reinSchema = new Schema({
     navn: {
         type:String,
         required:true
     },
-    personnummer: {
+    serienummer: {
         type:String,
         unique: true,
         required:true
     },
-    kontaktspråk:{
+    flokk:{
         type: String,
         required: true
     },
-    telefonnummer: {
+    fødselsdato: {
         type: String,
         required: true
     }
 }, {timestamps: true });
 
-const Eier = mongoose.model('eier', eierSchema);
-module.exports = Eier
+const Rein = mongoose.model('rein', reinSchema);
+module.exports = Rein
