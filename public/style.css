@@ -14,9 +14,54 @@ body{
   .todos li{
     background: #423a6f;
   }
-  .delete{
-    cursor: pointer;
-  }
+
   .filtered{
     display: none !important;
   }
+  .flokkHeader h1, .flokkHeader img {
+    display: inline-block;
+    margin: 30px;
+  }
+
+  .flokkHeader img {
+      float: left;
+  }
+
+  .flokkHeader h1{
+    color: white;
+  }
+
+  .reins{
+    padding-right: 30px;
+  }
+  .flocks{
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+  .flockWrapper{
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+  .a-tags-container a h1 {
+    margin: 5px;
+    padding: 5px;
+    display: inline-block;
+  }
+  .a-tags-container a {
+    color: white;
+  }
+  .ownerWrapper{
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+  .ownerInfo p {
+    display: inline-block;
+    margin-right: 10%;
+    margin-top:20px ;
+    color: white;
+  }
+  .ownerInfo {
+    margin-left: 5%;
+  }
+  
+  

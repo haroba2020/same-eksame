@@ -3,11 +3,19 @@ const Rein = require("../modules/Reins");
 const Owner = require("../modules/Owners");
 
 module.exports.database_get = async (req,res)  =>{
-    
     Owner.find().then((result)=>{
-        res.render('database',{owners: result});
+        res.render('database',{Owners: result});
     })
 }
+//get singular owner for owner info
+module.exports.ownerGet_post = async (req,res)  =>{
+    const {ownerID} = req.body
+
+    Owner.find({navn:ownerID}).then((result)=>{
+        res.status(201).json({owner: result})
+    })
+}
+
 module.exports.index_get = (req,res) =>{
     res.render('index')
 }

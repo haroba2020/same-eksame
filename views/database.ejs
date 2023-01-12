@@ -11,23 +11,25 @@
 
 </head>
 <body>
-    <header class="text-center text-light my-4">
-        <a href="/database"><h1 class="mb-4">Rein list</h1></a>
-        <a href="/map"><h1 class="mb-4">Kart</h1></a>
-        <a href="/index"><h1 class="mb-4">About</h1></a>
+  <header class="text-center text-light my-4">
+    <div class="a-tags-container">
+      <a href="/database" class="inline-block mr-2"><h1 class="mb-4">Rein list</h1></a>
+      <a href="/map" class="inline-block mr-2"><h1 class="mb-4">Kart</h1></a>
+      <a href="/index" class="inline-block mr-2"><h1 class="mb-4">About</h1></a>
+    </div>
+    <form class="search">
+      <input class="form-control m-auto searchField" type="text" name="search" placeholder="Søk reinsdyr" />
+    </form>
+    <h1 class="userTitle"></h1>
+    <h2 class="userBack d-none">Back</h2>
+  </header>
+  
 
-        <form class="search">
-          <input class="form-control m-auto searchField" type="text" name="search" placeholder="Søk reinsdyr" />
-        </form>
-        <h1 class="userTitle"></h1>
-        <h2 class="userBack d-none">Back</h2>
-      </header>
 
 
-
-      <ul class="text-light list-group todos mx-auto">
-      <div class="owners">
-      <% owners.forEach((item)=>{ %> 
+      <ul class="text-light list-group todos mx-auto ownerWrapper">
+      <div class="ownersWrap">
+      <% Owners.forEach((item)=>{ %> 
         <li class="text-light list-group-item d-flex justify-content-between align-items-center">
           <span><%= item.navn %> </span> 
           <i class="far fa-trash-alt delete"></i>     
@@ -36,10 +38,13 @@
       </div>
       </ul>
   <br>
+  
       <ul class="flocks text-light list-group todos mx-auto">
 
       </ul>
       <br>
+
+  <div class="flockWrapper">
       <div class="flokkHeader">
         <h1></h1>
         <img src="" height="300px">
@@ -48,19 +53,27 @@
       <ul class="reins text-light list-group todos mx-auto">
 
       </ul>
-
-
+      <div class="ownerInfo">
+        <p></p>
+        <p></p>
+        <p></p>
+      </div>
+  </div>
       <script>
-        const owners = document.querySelector('.owners')
+        
+        const ownersWrap = document.querySelector('.ownersWrap')
         const flocks = document.querySelector('.flocks')
         const userTitle = document.querySelector('.userTitle')
         const search = document.querySelector('.search')
         const reins = document.querySelector('.reins')
         const flokkHeader = document.querySelector('.flokkHeader')
         const userBack = document.querySelector('.userBack')
+        const ownerInfo = document.querySelector('.ownerInfo')
+
+
         var rein
         console.log(flokkHeader.children[1].src='https://i.kym-cdn.com/entries/icons/original/000/041/237/cover2.jpg')
-        owners.addEventListener('click', async (e)=>{
+        ownersWrap.addEventListener('click', async (e)=>{
 
           const ownerID = e.path[0].innerText
           userTitle.innerHTML = `${ownerID}  sine reinsdyr`
@@ -78,7 +91,7 @@
                 const data = await res.json()
                 console.log(data.rein)
                 rein = data.rein
-                owners.classList.add("d-none")
+                ownersWrap.classList.add("d-none")
                 userTitle.classList.remove('d-none')
                 data.flocks.forEach(flock => {
                   flocks.innerHTML +=
@@ -92,6 +105,27 @@
                   </div>
                   `
                 });
+                try {
+                const res = await fetch('/ownerGet',{
+                    method: 'post',
+                    body: JSON.stringify({ownerID}),
+                    headers: {'Content-Type': 'application/json'}
+                })
+
+                const data = await res.json()
+                const owner = data.owner[0]
+                console.log(owner)
+                    ownerInfo.innerHTML = 
+                  `
+                    <p> Telefonnummer: ${owner.telefonnummer}</p>
+                    <p> Kontaktspråk: ${owner.kontaktspråk}</p>
+                    <p> personnummer: ${owner.personnummer}</p>
+                  `
+
+              }catch{
+                console.log(err)
+              }
+                
     
             } catch (err) {
                 console.log(err)
@@ -113,10 +147,16 @@
                 const data = await res.json()
                 rein = data.reinsdyr
 
-                owners.classList.add("d-none")
+                ownersWrap.classList.add("d-none")
                 flocks.innerHTML = " "
                 userTitle.innerHTML = ""
                 userBack.classList.remove("d-none")
+                ownerInfo.innerHTML = 
+                  `
+                    <p> </p>
+                    <p> </p>
+                    <p> </p>
+                  `
 
 
                 data.flock.forEach(flock => {
@@ -180,12 +220,18 @@
           })
           userBack.addEventListener('click', e=>{
             userBack.classList.add("d-none")
-            owners.classList.remove("d-none")
+            ownersWrap.classList.remove("d-none")
             userTitle.classList.add('d-none')
             reins.innerHTML = ""
             flocks.innerHTML = " "
             flokkHeader.children[0].innerText=''
             flokkHeader.children[1].src='' 
+            ownerInfo.innerHTML = 
+                  `
+                    <p> </p>
+                    <p> </p>
+                    <p> </p>
+                  `
           })
           
     </script>

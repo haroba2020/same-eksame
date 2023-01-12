@@ -8,6 +8,7 @@ router.get('/index',Controller.index_get)
 router.get('/map',Controller.map_get)
 
 router.post('/owner', Controller.owner_post);
+router.post('/ownerGet', Controller.ownerGet_post)
 router.post('/rein', Controller.rein_post);
 router.post('/flock', Controller.flock_post);
 router.post('/database', Controller.database_post)
